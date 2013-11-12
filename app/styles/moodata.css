@@ -1,0 +1,56 @@
+@font-face
+{
+font-family: Lobster;
+src: url('../styles/LobsterTwo-Regular.ttf') format('opentype'),
+	 url('../styles/LobsterTwo-Italic.ttf') format('opentype'),
+	 url('../styles/LobsterTwo-Bold.ttf') format('opentype');
+    
+}
+
+#title {
+		margin-bottom:10px;
+}
+
+#title > img{
+	display:inline-block;
+	width:100px;
+}
+
+#title > h1{
+	font-family:'Lobster', cursive;
+	text-shadow: 1px 1px 2px black;
+	color:white;
+	font-size:5em;
+}
+
+
+#hello-text {
+	color:white;
+	font-size:3em
+}
+
+#signin > label{
+	color:white;
+}
+
+#signin h2{
+	color:white;
+	font-size:20px;
+	font-variant:small-caps;
+}
+
+
+#remember {
+	color:white;
+}
+
+.container {
+	/*background-color:rgba(0,0,0,0.2);*/
+}
+
+body {
+	background: url("../images/cow-bg.jpg") no-repeat center right scroll;
+	background-size: cover;
+	text-align: center;
+	padding: 50px 0;
+}
