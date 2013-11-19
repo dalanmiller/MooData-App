@@ -27,7 +27,7 @@ module.exports = function (grunt) {
 				cordova: '.cordova',
 				path: 'phonegap',
 				plugins: [],
-				platforms: ['ios', 'android'],
+				platforms: ['android'],
 				verbose: false
 			}
 		},
