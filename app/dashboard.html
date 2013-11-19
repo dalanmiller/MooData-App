@@ -1,0 +1,60 @@
+<nav class="navbar navbar-default" role="navigation">
+	<!-- Brand and toggle get grouped for better mobile display -->
+	<div class="navbar-header">
+		<button id="context-switch" type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+			<span class="sr-only">Toggle navigation</span>
+			<a  class="pull-right" href="#/trends">
+				<span class="glyphicon glyphicon-align-left"></a>
+			</button>
+			<a class="navbar-brand" href="#/">MooData</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+	</nav>
+
+	<div id="dashboard-container" class="container">
+		<div class="row">
+			<div id="hello-row" class="col-sm-offset-1 col-sm-10">
+				<span id="hello-farmer" class="lobster">Hello Farmer John!</span>
+				<button ng-click="refresh()" class="btn btn-info btn-lg pull-right">
+					<span class="glyphicon glyphicon-refresh"></button>
+			</div>
+		</div>
+			<!-- <div class="row milk-report-row">
+				<div class="col-sm-4">
+					<div class="report-date text-center">
+						<p class="month">Nov</p>
+						<p class="day-of-month">10</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<p class="bmcc-value text-center">1422</p>
+				</div>
+				<div class="col-sm-4">
+					<div class=" more-chevron text-center">
+						<button class="btn btn-default btn-lg">
+							<span class="glyphicon glyphicon-chevron-right"></span>
+						</button>
+					</div>
+				</div>
+			</div> -->
+
+			<div ng-repeat="report in reports" class="row milk-report-row">
+				<div class="col-sm-4">
+					<div class="pull-left report-date text-center">
+						<p class="month">{{report.Date.month}}</p>
+						<p class="day-of-month">{{report.Date.day}}</p>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<p class="bmcc-value">{{report.BMCC}}</p>
+				</div>
+				<div class="col-sm-4">
+					<div class="more-chevron">
+						<div class="pull-right">
+							<span class="glyphicon glyphicon-chevron-right"></span>
+						</div>
+					</div>
+				</div>
+		
+		</div>
