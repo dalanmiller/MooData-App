@@ -22,27 +22,30 @@
     <meta charset="utf-8">
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi">
-    <title>MooData</title>
-
-    <!-- build:js scripts/index.js -->
-    <script src="bower_components/jquery/jquery.min.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="bower_components/momentjs/moment.js"></script>
-
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="/bower_components/angular-resource/angular-resource.js"></script>
-    <script src="/bower_components/angular-route/angular-route.js"></script>
-
-    <script src="scripts/moodata.js"></script>
-    <!-- endbuild -->
-    
+     <title>MooData</title>
 
 
-    <!-- build:css(.tmp) styles/main.css -->
-    <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
-    <link href="styles/moodata.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles/main.css">
-    <!-- endbuild -->
+<!-- build:js scripts/index.js -->
+<script src="bower_components/jquery/jquery.min.js"></script>
+<script src="bower_components/momentjs/moment.js"></script>
+<script src="js/ionic.js"></script>
+<script src="js/ionic-angular.js"></script>    
+<script src="js/moodata.js"></script>
+<!-- endbuild -->
+
+<!-- build:css(.tmp) styles/main.css -->
+<link rel="stylesheet" href="css/ionic.css">
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<!-- endbuild -->
 </head>
-<body ng-view="main"></body>
+<body ng-app="moodata">
+
+<pane nav-router animation="slide-left-right-ios7">
+    <nav-bar animation="nav-title-slide-ios7" type="bar-positive" back-button-type="button-icon" back-button-icon="icon ion-arrow-left-c"></nav-bar>
+    <ng-view></ng-view>
+</pane>
+
+
+</body>
+
 </html>

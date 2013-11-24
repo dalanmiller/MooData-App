@@ -1,0 +1,45 @@
+<nav-page id="app-page" ng-controller="DashboardCtrl">
+    <tabs tabs-style="tabs-icon-top" tabs-type="tabs-positive" animate-nav="true">
+
+        <tab title="Dashboard" icon="icon ion-home">
+
+            <content has-header="true" has-tabs="true" padding="true">
+                <div class="padding text-center">
+                    <h2>Hello Farmer John!</h2>
+                    <button class="button button-positive button-block"> <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+
+                <list>
+
+                    <link-item ng-repeat="report in reports" type="item-text-wrap" href="#/report/{{report._id.$oid}}">
+
+                    <div class="text-center">
+                        <p class="month">{{report.Date.month}}</p>
+                        <p class="day-of-month">{{report.Date.day}}</p>
+                    </div>
+                </div>
+                <div class="">
+                    <p class="bmcc-value">{{report.BMCC}}</p>
+                </div>
+
+            </link-item>
+        </list>
+    </content>
+
+</tab>
+<tab title="Trends" icon="icon ion-cloud">
+    <content has-header="true" has-tabs="true" padding="true">
+        <div class="padding text-center">
+            <h2>Trends</h2>
+        </div>
+        <div class="list list-inset">
+
+            <button class="button button-positive ">Day</button>
+            <button class="button button-positive ">Week</button>
+            <button class="button button-positive ">Month</button>
+        </div>
+    </content>
+</tab>
+</tabs>
+</nav-page>

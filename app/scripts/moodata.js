@@ -16,81 +16,131 @@ moment.lang('en', {
     }
 });
 
-
-var app = angular.module('moodata', ['ngRoute','ngResource']);
+var app = angular.module('moodata', [ 'ionic','ngRoute', 'ngAnimate']);
  
-app.controller('DashboardCtrl', ['$scope', '$http', function($scope, $http){
-  
+// app.config(['$compileProvider', function ($compileProvider){
+//   // Needed for routing to work
+//   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/);
+// }]);
 
+app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 
+  $routeProvider.when('/dashboard', {
+    templateUrl: 'app.html',
+    controller: 'DashboardCtrl'
+  });
 
-  $scope.refresh = function(){
+  $routeProvider.when('/report/:reportId', {
+    templateUrl: 'report.html',
+    controller:'ReportCtrl'
+  });
 
-    $scope.reports = [];
-    
-    $http({method: 'GET', url: 'https://moodata.herokuapp.com/milkdata'}).
-    success(function(data, status, headers, config) {
-      console.log("SUCCESS");
-      console.log(status);
-      data.forEach(function(d){ 
-        if ($scope.reports && $scope.reports.length < 10){
-          
+  $routeProvider.otherwise({
+    redirectTo: '/dashboard'
+  });
 
-          console.log(window.moment(d.Date.$date.toString().slice(0,-3),'X'));
+}]);
 
-          d.Date.moment = window.moment(d.Date.$date.toString().slice(0,-3),'X');
-          
-          window.last_date = d.Date.moment;
+app.factory('Reports', ['$http', function($http) {
+  // Might use a resource here that returns a JSON array
 
-          d.Date.month = moment.months(d.Date.moment.month()).slice(0,3);
-          d.Date.day = d.Date.moment.date();
+  // Some fake testing data
+  var reports = [];
 
-          $scope.reports.push(d);  
+  $http({method: 'GET', url: 'https://moodata.herokuapp.com/milkdata'}).
+      
+      success(function(data, status, headers, config) {
+        
+        data.forEach(function(d){ 
+          if (reports && reports.length < 10){
+            
+            d.Date.moment = window.moment(d.Date.$date.toString().slice(0,-3),'X');
+            
+            window.last_date = d.Date.moment;
 
+            d.Date.month = moment.months(d.Date.moment.month()).slice(0,3);
+            d.Date.day = d.Date.moment.date();
+            d.Date.full_date = d.Date.moment.calendar();
+
+            reports.push(d);  
+
+          }
+        });
+
+        }).
+        error(function(data, status, headers, config) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+          console.log(status);
+          console.log(data);
+        });
+
+  return {
+    all: function() {
+      return reports;
+    },
+    get: function(reportId) {
+      // Simple index lookup
+      console.log("GO GO GADGET");
+      for (var i=0; i<reports.length; i++ ) {
+        if (reports[i]._id.$oid == reportId){
+          console.log(reports[i]);
+          return reports[i];
         }
+      }
+
+      return reports[reportId];
+    },
+    refresh: function(){
+      var reports = [];
+      $http({method: 'GET', url: 'https://moodata.herokuapp.com/milkdata'}).
+      
+      success(function(data, status, headers, config) {
+        
+        data.forEach(function(d){ 
+          if (reports && $reports.length < 10){
+            
+            d.Date.moment = window.moment(d.Date.$date.toString().slice(0,-3),'X');
+            
+            window.last_date = d.Date.moment;
+
+            d.Date.month = moment.months(d.Date.moment.month()).slice(0,3);
+            d.Date.day = d.Date.moment.date();
+            d.Date.full_date = d.Date.moment.calendar();
+
+            reports.push(d);  
+
+          }
+        });
+
+      }).
+      error(function(data, status, headers, config) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+          console.log(status);
+          console.log(data);
       });
 
-    }).
-    error(function(data, status, headers, config) {
-      // called asynchronously if an error occurs
-      // or server returns response with an error status.
-      console.log(status);
-      console.log(data);
-    });
-
-
-
-
-
-    if (!$scope.reports){
-      console.log("REFRESH THIS COW!");
-      $scope.refresh();
-    }
-
-    console.log($scope.report);
   }
+}}]);
+
+app.controller('DashboardCtrl', ['Reports', '$scope', function(Reports, $scope){
+
+  $scope.reports = Reports.all();
+  
+}]);
+
+app.controller('ReportCtrl', ['$scope','$routeParams' , 'Reports', function($scope, $routeParams, Reports){
+  console.log("REPORTING IN"+$routeParams.reportId);
+  $scope.report = Reports.get($routeParams.reportId);
 
 }]);
 
-app.controller('TrendsCtrl', ['$scope', '$http', function($scope, $http){
+app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
 
 }]);
 
-app.config(['$routeProvider', function($routeProvider) {
-    $routeProvider.
-      when('/', {controller:CreateCtrl, templateUrl:'signin.html'}).
-      // when('/edit/:projectId', {controller:EditCtrl, templateUrl:'detail.html'}).
-      when('/dashboard', {controller:'DashboardCtrl', templateUrl:'dashboard.html'}).
-      when('/trends', {controller:'TrendsCtrl', templateUrl:'trends.html'}).
-      otherwise({redirectTo:'/'});
-  }]);
 
- 
-function CreateCtrl($scope) {
-  // $scope.save = function() {
-  //   Projects.add($scope.project, function() {
-  //     $timeout(function() { $location.path('/'); });
-  //   });
-  // }
-}
+
+
  

@@ -1,0 +1,49 @@
+<nav-page title="report.bmcc">
+  <content has-header="true" padding="true">
+	
+	<list>
+
+		<h3>Logistics</h3>
+		<item>Pickup Date: {{report.Date.full_date}}</item>
+		<item>Pickup Time: {{report['Pickup Time']}}</item>
+		<item>Test Date: {{report['Test Date']}}</item>
+		
+		<h3>Milk Data</h3>
+		<item>Volume: {{report['Volume']}}</item>
+		<item>BMCC: {{report.BMCC}}</item>
+		<item>Milkfat: {{report.Milkfat}}</item>
+		<item>Volume: {{report.Volume}}</item>
+		<item>Temperature: {{report['Temp']}}</item>
+		<item>Total Plate Count: {{report['Total Plate Count']}}</item>
+		<item>True Protein: {{report['True Protein']}}</item>
+		
+	</list>
+  
+  	</content>
+</nav-page>
+
+
+<!-- $$hashKey: "00S"
+BMCC: "296"
+Date: Object
+$date: 1325376000000
+day: 1
+moment: Moment
+_a: Array[0]
+_d: Sun Jan 01 2012 10:30:00 GMT+1030 (CST)
+_f: "X"
+_i: "1325376000"
+_isUTC: false
+_l: undefined
+_pf: Object
+_strict: undefined
+__proto__: Moment
+month: "Jan"
+__proto__: Object
+Milkfat: "419.37"
+Pickup Time: "1:57"
+Temp: "2.6"
+Test Date: "3/01/12"
+Total Plate Count: "3"
+True Protein: "313.51"
+Volume: "10179" -->
