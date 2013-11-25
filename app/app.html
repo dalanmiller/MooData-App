@@ -1,12 +1,13 @@
-<nav-page id="app-page" ng-controller="DashboardCtrl">
+<nav-page id="app-page" >
     <tabs tabs-style="tabs-icon-top" tabs-type="tabs-positive" animate-nav="true">
 
-        <tab title="Dashboard" icon="icon ion-home">
+        <tab title="Dashboard" icon="icon ion-home" ng-controller="DashboardCtrl">
 
             <content has-header="true" has-tabs="true" padding="true">
+            
                 <div class="padding text-center">
                     <h2>Hello Farmer John!</h2>
-                    <button class="button button-positive button-block"> <i class="fa fa-refresh"></i>
+                    <button ng-click="refresh()" class="button button-positive button-block"> <i class="fa fa-refresh"></i>
                     </button>
                 </div>
 
@@ -28,13 +29,22 @@
     </content>
 
 </tab>
-<tab title="Trends" icon="icon ion-cloud">
+<tab title="Trends" icon="icon ion-cloud" ng-controller="TrendsCtrl">
     <content has-header="true" has-tabs="true" padding="true">
+    
         <div class="padding text-center">
             <h2>Trends</h2>
+            <button ng-click="refresh()" class="button button-positive button-block"> <i class="fa fa-refresh"></i>
         </div>
-        <div class="list list-inset">
 
+
+
+        <div id="graph">
+            
+        </div>
+
+
+        <div class="list list-inset">
             <button class="button button-positive ">Day</button>
             <button class="button button-positive ">Week</button>
             <button class="button button-positive ">Month</button>

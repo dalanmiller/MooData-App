@@ -20,22 +20,27 @@
 <html ng-app="moodata">
 <head>
     <meta charset="utf-8">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1">
+    <!-- <meta name="viewport" content="width=device-width, height=device-height, target-densitydpi=device-dpi"> -->
      <title>MooData</title>
 
+   
 
 <!-- build:js scripts/index.js -->
+<script type="text/javascript" src="scripts/d3.v3.js"></script>
 <script src="bower_components/jquery/jquery.min.js"></script>
 <script src="bower_components/momentjs/moment.js"></script>
-<script src="js/ionic.js"></script>
-<script src="js/ionic-angular.js"></script>    
-<script src="js/moodata.js"></script>
+<script src="scripts/ionic.js"></script>
+<script src="scripts/ionic-angular.js"></script> 
+<script src="scripts/moodata.js"></script>
 <!-- endbuild -->
 
+
+
 <!-- build:css(.tmp) styles/main.css -->
-<link rel="stylesheet" href="css/ionic.css">
-<link rel="stylesheet" href="css/font-awesome.min.css">
+<link rel="stylesheet" href="styles/charts.css">
+<link rel="stylesheet" href="styles/ionic.css">
+<link rel="stylesheet" href="styles/font-awesome.min.css">
 <!-- endbuild -->
 </head>
 <body ng-app="moodata">
