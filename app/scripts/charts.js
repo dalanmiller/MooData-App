@@ -1,36 +1,42 @@
-var sd, ed, startDate, endDate, range, json,empty;
+var sd, ed, startDate, endDate, range, json, empty;
 $(document).ready(function() {
-	$("#datepicker").datepicker();
-	$("#datepicker").datepicker("option", "dateFormat", "yy-mm-dd");
-	endDate = $.datepicker.formatDate('yy-mm-dd', new Date());
+	//$("#datepicker").datepicker();
+	//$("#datepicker").datepicker("option", "dateFormat", "yy-mm-dd");
+	var today = new Date();
+	endDate = getTimeString(today);
 	range = 6;
 	var ed = endDate.split("-");
 	var sd = new Date(ed[0], ed[1] - 1, ed[2]);
 	sd.setDate(sd.getDate() - range);
-	startDate = $.datepicker.formatDate('yy-mm-dd', sd);
-	$(".dropdown-menu li a").click(function() {
-		var selText = $(this).text();
+	startDate = getTimeString(sd);
+	console.log(startDate);
+	$(".range").click(function() {
 		range = $(this).attr("value");
-		$(this).parents('.input-group-btn').find('.btn').html(selText + ' <span class="caret"></span>');
+		console.log("range set:"+range);
 	});
 	$.getJSON("scripts/milkdata.json", function(data) {
 		json = data;
 	});
 
 	$("#btn").click(function() {
-		var d = $("#datepicker").datepicker("option", "dateFormat", "yy-mm-dd").val();
-		if (d != "") {
-			endDate = d;
+		//var d = $("#datepicker").datepicker("option", "dateFormat", "yy-mm-dd").val();
+		
+		//d = $('#myDate').datebox("getTheDate");
+		d=$("#datepicker").val();
+		if (d !="") {
+			console.log("test");
+			endDate =d;
+			console.log("myDate:" + endDate);
 			var ed = endDate.split("-");
 			var sd = new Date(ed[0], ed[1] - 1, ed[2]);
 			sd.setDate(sd.getDate() - range);
-			startDate = $.datepicker.formatDate('yy-mm-dd', sd);
+			startDate =getTimeString(sd);
 		}
 
 		$("#Date").text("Trend Chart - From:" + startDate + " To: " + endDate);
 		//$.getJSON("scripts/milkdata.json", draw);
-		empty=draw(json);
-		if(empty==false){
+		empty = draw(json);
+		if (empty == false) {
 			$("svg").remove();
 			alert("No data in the selected period!");
 		}
@@ -113,7 +119,7 @@ function draw(info) {
 			}
 		});
 	});
-	if(data.length==0){
+	if (data.length == 0) {
 		return false;
 	}
 	data.sort(function(a, b) {
@@ -134,7 +140,7 @@ function draw(info) {
 	svg.append("g").attr("class", "y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text("BMCC");
 
 	svg.append("path").datum(data).attr("class", "line").attr("d", line);
-	
+
 	return true;
 }
 
@@ -158,4 +164,12 @@ function getTimeStamp(timeString) {
 	var date = new Date(dates[0], dates[1] - 1, dates[2]);
 	var timestamp = date.getTime();
 	return timestamp;
+}
+
+function getTimeString(dateObj){
+	var year = dateObj.getFullYear();
+	var month = ((dateObj.getMonth() + 1) < 10 ? '0' + (dateObj.getMonth() + 1) : (dateObj.getMonth() + 1) );
+	var date = (dateObj.getDate() < 10 ? '0' + dateObj.getDate() : dateObj.getDate());
+	var time = year + '-' + month + '-' + date;
+	return time;
 }
