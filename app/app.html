@@ -45,9 +45,33 @@
 
 
         <div class="list list-inset">
-            <button class="button button-positive ">Day</button>
-            <button class="button button-positive ">Week</button>
-            <button class="button button-positive ">Month</button>
+
+			<input type="text" class="form-control" id="datepicker"placeholder="End Date">
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					Back Range <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu pull-right">
+					<li>
+						<a href="#" value="2">3 days</a>
+					</li>
+					<li>
+						<a href="#" value="6">7 days</a>
+					</li>
+					<li>
+						<a href="#" value="29">30 days</a>
+					</li>
+					<li class="divider"></li>
+					<li>
+						<a href="#" value="365">Whole year</a>
+					</li>
+				</ul>
+			</div><!-- /btn-group -->
+	
+			<button class="btn btn-primary" type="button" id="btn">
+				Go!
+			</button>
+
         </div>
     </content>
 </tab>
