@@ -1,79 +1,73 @@
 <nav-page id="app-page" >
-    <tabs tabs-style="tabs-icon-top" tabs-type="tabs-positive" animate-nav="true">
+	<tabs tabs-style="tabs-icon-top" tabs-type="tabs-positive" animate-nav="true">
 
-        <tab title="Dashboard" icon="icon ion-home" ng-controller="DashboardCtrl">
+		<tab title="Dashboard" icon="icon ion-home" ng-controller="DashboardCtrl">
 
-            <content has-header="true" has-tabs="true" padding="true">
-            
-                <div class="padding text-center">
-                    <h2>Hello Farmer John!</h2>
-                    <button ng-click="refresh()" class="button button-positive button-block"> <i class="fa fa-refresh"></i>
-                    </button>
-                </div>
+			<content has-header="true" has-tabs="true" padding="true">
 
-                <list>
+				<div class="padding text-center">
+					<h2>Hello Farmer John!</h2>
+					<button ng-click="refresh()" class="button button-positive button-block">
+						<i class="fa fa-refresh"></i>
+					</button>
+				</div>
 
-                    <link-item ng-repeat="report in reports" type="item-text-wrap" href="#/report/{{report._id.$oid}}">
+				<list>
 
-                    <div class="text-center">
-                        <p class="month">{{report.Date.month}}</p>
-                        <p class="day-of-month">{{report.Date.day}}</p>
-                    </div>
-                </div>
-                <div class="">
-                    <p class="bmcc-value">{{report.BMCC}}</p>
-                </div>
+					<link-item ng-repeat="report in reports" type="item-text-wrap" href="#/report/{{report._id.$oid}}">
 
-            </link-item>
-        </list>
-    </content>
+						<div class="text-center">
+							<p class="month">
+								{{report.Date.month}}
+							</p>
+							<p class="day-of-month">
+								{{report.Date.day}}
+							</p>
+						</div>
+						</div>
+						<div class="">
+							<p class="bmcc-value">
+								{{report.BMCC}}
+							</p>
+						</div>
 
-</tab>
-<tab title="Trends" icon="icon ion-cloud" ng-controller="TrendsCtrl">
-    <content has-header="true" has-tabs="true" padding="true">
-    
-        <div class="padding text-center">
-            <h2>Trends</h2>
-            <button ng-click="refresh()" class="button button-positive button-block"> <i class="fa fa-refresh"></i>
-        </div>
+					</link-item>
+				</list>
+			</content>
 
+		</tab>
+		<tab title="Trends" icon="icon ion-cloud" ng-controller="TrendsCtrl">
+			<content has-header="true" has-tabs="true" padding="true">
 
+				<div class="padding text-center">
+					<h2>Trends</h2>
+					<button ng-click="refresh()" class="button button-positive button-block">
+						<i class="fa fa-refresh"></i>
+				</div>
 
-        <div id="graph">
-            
-        </div>
+				<div id="graph">
 
+				</div>
 
-        <div class="list list-inset">
-
-			<input type="text" class="form-control" id="datepicker"placeholder="End Date">
-			<div class="input-group-btn">
-				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-					Back Range <span class="caret"></span>
+				<input type="date" id="datepicker" placeholder="End Date">
+				<button class="range" value="2">
+					3 days
 				</button>
-				<ul class="dropdown-menu pull-right">
-					<li>
-						<a href="#" value="2">3 days</a>
-					</li>
-					<li>
-						<a href="#" value="6">7 days</a>
-					</li>
-					<li>
-						<a href="#" value="29">30 days</a>
-					</li>
-					<li class="divider"></li>
-					<li>
-						<a href="#" value="365">Whole year</a>
-					</li>
-				</ul>
-			</div><!-- /btn-group -->
-	
-			<button class="btn btn-primary" type="button" id="btn">
-				Go!
-			</button>
+				<button class="range" value="6">
+					7 days
+				</button>
+				<button class="range" value="29">
+					30 days
+				</button>
+				<button class="range" value="365">
+					whole year
+				</button>
+				<button type="button" id="btn">
+					Go!
+				</button>
 
-        </div>
-    </content>
-</tab>
-</tabs>
+				</div>
+			</content>
+		</tab>
+	</tabs>
 </nav-page>
