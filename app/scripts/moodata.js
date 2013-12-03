@@ -219,11 +219,11 @@ app.controller('ReportCtrl', ['$scope','$routeParams' , 'Reports', function($sco
 
 app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
   
-
   console.log("LETS GO REPORT");
   
+  
    var sd, ed, startDate, endDate, range, json, empty;
-
+   var parameter="BMCC";
       var today = new Date();
       endDate = getTimeString(today);
       range = 6;
@@ -236,10 +236,73 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
       $.getJSON("scripts/milkdata.json", function(data) {
         json = data;
       });
-  $scope.changeRange=function(range1) {
-		range = range1;
-		console.log("range set:"+range);
-	};
+	
+  $scope.periods=[
+  {
+  	name:"3 days",
+  	value:"2"
+  },
+  {
+  	name:"week",
+  	value:"6"
+  },
+  {
+  	name:"month",
+  	value:"30"
+  },
+  {
+  	name:"year",
+  	value:"364"
+  }
+  ];
+  
+  $scope.setRange = function(period) {
+        $scope.selected = period;
+        range=period.value;
+    }
+
+  $scope.isSelected = function(period) {
+        return $scope.selected === period;
+  }
+  
+  $scope.paras=[
+  {
+  	name:"BMCC",
+  	value:"BMCC"
+  },
+  {
+  	name:"Milkfat",
+  	value:"Milkfat"
+  },
+  {
+  	name:"Volume",
+  	value:"Volume"
+  },
+  {
+  	name:"Temperature",
+  	value:"Temp"
+  },
+  {
+  	name:"Total Plate Count",
+  	value:"Total Plate Count"
+  },
+  {
+  	name:"True Protein",
+  	value:"True Protein"
+  }
+  ];
+  
+  
+  $scope.setParameter = function(para) {
+        $scope.selected2 = para;
+        parameter=para.value;
+    }
+
+  $scope.isSelected2 = function(para) {
+        return $scope.selected2 === para;
+  }
+	
+	
   $scope.genChart = function(){
     console.log("GEN CHART!")
        
@@ -283,6 +346,61 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
             var sdts = getTimeStamp(startDate);
             var edts = getTimeStamp(endDate);
 
+            var date1 = "";
+            var ts,pm;
+            var data = [];
+            var flag = 0;
+            var flag2=0;
+            $.each(info, function(key, value) {
+              $.each(value, function(k, v) {
+                if (k == "Date") {
+                  $.each(v, function(k1, v1) {
+                    date1 = timeConverter(v1);
+                    var date1ts = getTimeStamp(date1);
+
+                    if (date1ts >= sdts && date1ts <= edts) {
+                      ts = v1;
+                      flag2+=1;
+                    } else {
+                      flag = 1;
+                    }
+                  });
+                  if (flag == 0) {
+					return true;
+				} else {
+					flag=0;
+					return false;
+				}
+                }
+                if (k == parameter) {
+                  pm=v;
+                  flag2+=1;
+                }
+                if (flag2 == 2) {
+                var d = {
+                    date : parseDate(date1),
+                    close : pm,
+                    timestamp : ts
+                  };
+                	data.push(d);
+                    return false;
+                }
+              });
+              flag2=0;
+            });
+            if (data.length == 0) {
+              return false;
+            }
+            data.sort(function(a, b) {
+              return a.timestamp - b.timestamp;
+            });
+            
+            var data1=data.slice(0);
+            data1.sort(function(a, b) {
+              return a.close - b.close;
+            });
+            var last=data1.length-1;
+            
             var x = d3.time.scale().range([0, width]);
 
             var y = d3.scale.linear().range([height, 0]);
@@ -293,7 +411,12 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
             } else {
               var xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(10);
             }
-
+            
+            x.domain(d3.extent(data, function(d) {
+              return d.date;
+            }));
+            y.domain([data1[0].close,data1[last].close]);
+            
             var yAxis = d3.svg.axis().scale(y).orient("left");
 
             var line = d3.svg.line().x(function(d) {
@@ -303,62 +426,13 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
             });
 
             var svg = d3.select("#graph").append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            var date1 = "";
-            var ts;
-            var data = [];
-            var flag = 0;
-            $.each(info, function(key, value) {
-              $.each(value, function(k, v) {
-                if (k == "Date") {
-                  $.each(v, function(k1, v1) {
-                    date1 = timeConverter(v1);
-                    var date1ts = getTimeStamp(date1);
-
-                    if (date1ts >= sdts && date1ts <= edts) {
-                      ts = v1;
-                    } else {
-                      flag = 1;
-                    }
-                  });
-                  if (flag == 0) {
-                    return true;
-                  } else {
-                    flag = 0;
-                    return false;
-                  }
-
-                }
-                if (k == "BMCC") {
-                  var d = {
-                    date : parseDate(date1),
-                    close : v,
-                    timestamp : ts
-                  };
-                  data.push(d);
-                  return true;
-                }
-              });
-            });
-            if (data.length == 0) {
-              return false;
-            }
-            data.sort(function(a, b) {
-              return a.timestamp - b.timestamp;
-            });
-            x.domain(d3.extent(data, function(d) {
-              return d.date;
-            }));
-            y.domain(d3.extent(data, function(d) {
-              return d.close;
-            }));
-
+            
             //code doing diagonal x axis labels adapted from http://www.d3noob.org/2013/01/how-to-rotate-text-labels-for-x-axis-of.html
             svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(xAxis).selectAll("text").style("text-anchor", "end").attr("dx", "-.8em").attr("dy", ".15em").attr("transform", function(d) {
               return "rotate(-65)";
             });
 
-            svg.append("g").attr("class", "y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text("BMCC");
+            svg.append("g").attr("class", "y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text(parameter);
 
             svg.append("path").datum(data).attr("class", "line").attr("d", line);
 

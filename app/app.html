@@ -7,10 +7,12 @@
 
 				<div class="padding text-center" ng-model="farmer">
 					<h2>Hello Farmer {{farmer.user}}!</h2>
-                    <p>{{farmer.email}}</p>
+					<p>
+						{{farmer.email}}
+					</p>
 					<button ng-click="refresh()" class="button button-dark button-block">
 						<i class="fa fa-refresh"></i>
-                        <span ng-model="refresh">Last refreshed: {{refresh.time}}</span>
+						<span ng-model="refresh">Last refreshed: {{refresh.time}}</span>
 					</button>
 				</div>
 
@@ -18,14 +20,11 @@
 
 					<link-item ng-repeat="report in reports" type="item-text-wrap" href="#/report/{{report._id.$oid}}">
 
-                        <div class="button-bar">
-                          <a class="button button-clear" href="#/report/{{report._id.$oid}}">                        
-                          {{report.Date.month}} {{report.Date.day}}                           
-                            </a>
-                          <a class="button button-clear" href="#/report/{{report._id.$oid}}">{{report.BMCC}}</a>
-                          
-                        </div>    								
+						<div class="button-bar">
+							<a class="button button-clear" href="#/report/{{report._id.$oid}}"> {{report.Date.month}} {{report.Date.day}} </a>
+							<a class="button button-clear" href="#/report/{{report._id.$oid}}">{{report.BMCC}}</a>
 
+						</div>
 
 					</link-item>
 				</list>
@@ -35,30 +34,33 @@
 		<tab title="Trends" icon="icon ion-cloud" ng-controller="TrendsCtrl">
 			<content has-header="true" has-tabs="true" padding="true">
 
-				<div class="padding text-center">                    
-                        <input type="date" id="datepicker" placeholder="End Date">
-                        <div class="button-bar">
-                            <div class="col"><button ng-click="changeRange(2)"  class="button button-block">
-                                3 days
-                            </button></div>
-                            <div class="col"><button ng-click="changeRange(6)" class="button button-block">
-                                7 days
-                            </button></div>
-                            <div class="col"><button ng-click="changeRange(30)" class="button button-block">
-                                month
-                            </button></div>
-                            <div class="col"><button ng-click="changeRange(364)" class="button button-block">
-                                year
-                            </button></div>
-                        </div>
-                        <button ng-click="genChart()" class="button button-block" type="button" >
-                            Go!
-                        </button>    
+				<div class="padding text-center">
+					<input type="date" id="datepicker" placeholder="End Date">
+					<div class="button-bar" >
+						<div class="col" ng-repeat="period in periods">
+							<button ng-click="setRange(period)"  class="button button-block" ng-class="isSelected(period)? 'button-light':''">
+								{{period.name}}
+							</button>
+						</div>
+					</div>
+
+					<div class="button-bar">
+						<div class="col" ng-repeat="para in paras">
+							<button ng-click="setParameter(para)"  class="button button-block" ng-class="isSelected2(para)? 'button-light':''">
+								{{para.name}}
+							</button>
+						</div>
+					</div>
+
+
+					<button ng-click="genChart()" class="button button-block" type="button" >
+						Go!
+					</button>
 
 				</div>
-                <div id="graph">
+				<div id="graph">
 
-                        </div>
+				</div>
 			</content>
 		</tab>
 	</tabs>
