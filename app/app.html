@@ -38,20 +38,20 @@
 				<div class="padding text-center">                    
                         <input type="date" id="datepicker" placeholder="End Date">
                         <div class="button-bar">
-                            <div class="col"><button class="button button-block range" value="2">
+                            <div class="col"><button ng-click="changeRange(2)"  class="button button-block">
                                 3 days
                             </button></div>
-                            <div class="col"><button class="button button-block range" value="6">
+                            <div class="col"><button ng-click="changeRange(6)" class="button button-block">
                                 7 days
                             </button></div>
-                            <div class="col"><button class="button button-block range" value="29">
+                            <div class="col"><button ng-click="changeRange(30)" class="button button-block">
                                 month
                             </button></div>
-                            <div class="col"><button class="button button-block range" value="365">
+                            <div class="col"><button ng-click="changeRange(364)" class="button button-block">
                                 year
                             </button></div>
                         </div>
-                        <button ng-click="genChart()" class="button button-block" type="button" id="btn">
+                        <button ng-click="genChart()" class="button button-block" type="button" >
                             Go!
                         </button>    
 

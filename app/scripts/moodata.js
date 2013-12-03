@@ -221,10 +221,8 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
   
 
   console.log("LETS GO REPORT");
-
-  $scope.genChart = function(){
-    console.log("GEN CHART!")
-     var sd, ed, startDate, endDate, range, json, empty;
+  
+   var sd, ed, startDate, endDate, range, json, empty;
 
       var today = new Date();
       endDate = getTimeString(today);
@@ -234,15 +232,16 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
       sd.setDate(sd.getDate() - range);
       startDate = getTimeString(sd);
       console.log(startDate);
-      $(".range").click(function() {
-        range = $(this).attr("value");
-        console.log("range set:"+range);
-      });
+      
       $.getJSON("scripts/milkdata.json", function(data) {
         json = data;
       });
-
-      $("#btn").click(function() {
+  $scope.changeRange=function(range1) {
+		range = range1;
+		console.log("range set:"+range);
+	};
+  $scope.genChart = function(){
+    console.log("GEN CHART!")
        
             d=$("#datepicker").val();
             if (d !="") {
@@ -264,7 +263,7 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
             }
 
 
-        });
+        
 
             //code adapted from D3 Line chart example at http://bl.ocks.org/benjchristensen/2579599
         function draw(info) {
