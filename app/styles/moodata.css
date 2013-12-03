@@ -1,0 +1,26 @@
+@font-face
+{
+font-family: Lobster;
+src: url('../fonts/LobsterTwo-Regular.ttf') format('opentype'),
+         url('../fonts/LobsterTwo-Italic.ttf') format('opentype'),
+         url('../fonts/LobsterTwo-Bold.ttf') format('opentype');
+    
+}
+
+.lobster {
+        font-family:'Lobster', cursive;
+
+}
+
+
+#signin h1 {
+	text-rendering: optimizeLegibility;
+	font-size:80px;
+	color: rgb(70,70,70);
+	text-shadow: 1px 1px 2px black;
+
+}
+
+#signin img {
+	width:20%;
+}

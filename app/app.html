@@ -1,14 +1,16 @@
 <nav-page id="app-page" >
-	<tabs tabs-style="tabs-icon-top" tabs-type="tabs-positive" animate-nav="true">
+	<tabs tabs-style="tabs-icon-top" tabs-type="tabs-dark" animate-nav="true">
 
 		<tab title="Dashboard" icon="icon ion-home" ng-controller="DashboardCtrl">
 
 			<content has-header="true" has-tabs="true" padding="true">
 
-				<div class="padding text-center">
-					<h2>Hello Farmer John!</h2>
-					<button ng-click="refresh()" class="button button-positive button-block">
+				<div class="padding text-center" ng-model="farmer">
+					<h2>Hello Farmer {{farmer.user}}!</h2>
+                    <p>{{farmer.email}}</p>
+					<button ng-click="refresh()" class="button button-dark button-block">
 						<i class="fa fa-refresh"></i>
+                        <span ng-model="refresh">Last refreshed: {{refresh.time}}</span>
 					</button>
 				</div>
 
@@ -16,20 +18,14 @@
 
 					<link-item ng-repeat="report in reports" type="item-text-wrap" href="#/report/{{report._id.$oid}}">
 
-						<div class="text-center">
-							<p class="month">
-								{{report.Date.month}}
-							</p>
-							<p class="day-of-month">
-								{{report.Date.day}}
-							</p>
-						</div>
-						</div>
-						<div class="">
-							<p class="bmcc-value">
-								{{report.BMCC}}
-							</p>
-						</div>
+                        <div class="button-bar">
+                          <a class="button button-clear" href="#/report/{{report._id.$oid}}">                        
+                          {{report.Date.month}} {{report.Date.day}}                           
+                            </a>
+                          <a class="button button-clear" href="#/report/{{report._id.$oid}}">{{report.BMCC}}</a>
+                          
+                        </div>    								
+
 
 					</link-item>
 				</list>
@@ -39,34 +35,30 @@
 		<tab title="Trends" icon="icon ion-cloud" ng-controller="TrendsCtrl">
 			<content has-header="true" has-tabs="true" padding="true">
 
-				<div class="padding text-center">
-					<h2>Trends</h2>
-					<button ng-click="refresh()" class="button button-positive button-block">
-						<i class="fa fa-refresh"></i>
-				</div>
-
-				<div id="graph">
-
-				</div>
-
-				<input type="date" id="datepicker" placeholder="End Date">
-				<button class="range" value="2">
-					3 days
-				</button>
-				<button class="range" value="6">
-					7 days
-				</button>
-				<button class="range" value="29">
-					30 days
-				</button>
-				<button class="range" value="365">
-					whole year
-				</button>
-				<button type="button" id="btn">
-					Go!
-				</button>
+				<div class="padding text-center">                    
+                        <input type="date" id="datepicker" placeholder="End Date">
+                        <div class="button-bar">
+                            <div class="col"><button class="button button-block range" value="2">
+                                3 days
+                            </button></div>
+                            <div class="col"><button class="button button-block range" value="6">
+                                7 days
+                            </button></div>
+                            <div class="col"><button class="button button-block range" value="29">
+                                month
+                            </button></div>
+                            <div class="col"><button class="button button-block range" value="365">
+                                year
+                            </button></div>
+                        </div>
+                        <button ng-click="genChart()" class="button button-block" type="button" id="btn">
+                            Go!
+                        </button>    
 
 				</div>
+                <div id="graph">
+
+                        </div>
 			</content>
 		</tab>
 	</tabs>

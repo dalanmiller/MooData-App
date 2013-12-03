@@ -25,6 +25,16 @@ var app = angular.module('moodata', [ 'ionic','ngRoute', 'ngAnimate']);
 
 app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 
+  $routeProvider.when('/', { 
+    templateUrl: 'signin.html',
+    controller: 'SigninCtrl'
+  });
+
+  $routeProvider.when('/signin', { 
+    templateUrl: 'signin.html',
+    controller: 'SigninCtrl'
+  });
+
   $routeProvider.when('/dashboard', {
     templateUrl: 'app.html',
     controller: 'DashboardCtrl'
@@ -35,11 +45,31 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
     controller:'ReportCtrl'
   });
 
-  $routeProvider.otherwise({
-    redirectTo: '/dashboard'
-  });
+  // $routeProvider.otherwise({
+  //   redirectTo: '/signin'
+  // });
 
 }]);
+
+
+app.factory('User', function() { 
+  
+  var user = {};
+
+  return {
+
+    get: function(){
+        return user;
+    },
+
+    set: function(data){
+      user = data;
+      return user;
+    }
+    
+
+  }
+});
 
 app.factory('Reports', ['$http', function($http) {
   // Might use a resource here that returns a JSON array
@@ -67,6 +97,10 @@ app.factory('Reports', ['$http', function($http) {
           }
         });
 
+        reports.sort(function(a,b){
+          return b.Date.moment > a.Date.moment;
+        });
+
         }).
         error(function(data, status, headers, config) {
           // called asynchronously if an error occurs
@@ -77,7 +111,17 @@ app.factory('Reports', ['$http', function($http) {
 
   return {
     all: function() {
+
+      reports.sort(function(a,b){
+        console.log(a +" "+ b)
+        return b.Date.moment > a.Date.moment;
+      });
+
       return reports;
+    },
+    clear: function(){
+      reports = [];
+      this.refresh();
     },
     get: function(reportId) {
       // Simple index lookup
@@ -99,7 +143,7 @@ app.factory('Reports', ['$http', function($http) {
       success(function(data, status, headers, config) {
         
         data.forEach(function(d){ 
-          if (reports && reports.length < 10){
+          if (reports && reports.length < 20){
             
             d.Date.moment = window.moment(d.Date.$date.toString().slice(0,-3),'X');
             
@@ -125,106 +169,228 @@ app.factory('Reports', ['$http', function($http) {
   }
 }}]);
 
-app.controller('DashboardCtrl', ['Reports', '$scope', function(Reports, $scope){
+app.controller('SigninCtrl', ['$scope','$http', '$location', 'User', function($scope, $http, $location, User){
+
+
+  $scope.login = function(){
+
+    var package = { "username": this.user.email, "password":this.user.pass };
+
+    console.log(this);
+    console.log($scope);
+    console.log(package);
+
+    $http({'method':'POST', 'url':'http://moodata.herokuapp.com/app_login', 'data' :JSON.stringify(package) } ).
+      
+      success(function(data, status, headers, config) {
+        User.set(data);
+        $location.path('/dashboard');
+      }).
+      error(function(data, status, headers, config) {
+        alert("Login has failed, please enter your credentials again");
+        $scope.mooPassword = "";
+      });
+  }
+
+
+}]);
+
+app.controller('DashboardCtrl', ['User','Reports', '$scope', function(User, Reports, $scope){
 
   $scope.reports = Reports.all();
+
+  $scope.refresh = function(){
+    console.log(this);
+    this.reports.forEach(function(d){ d = null });
+    console.log(this);
+    Reports.refresh();
+    this.reports = Reports.all();
+    this.refresh.time = moment().calendar();
+  }
+
+  $scope.farmer = User.get();
   
 }]);
 
 app.controller('ReportCtrl', ['$scope','$routeParams' , 'Reports', function($scope, $routeParams, Reports){
   console.log("REPORTING IN"+$routeParams.reportId);
   $scope.report = Reports.get($routeParams.reportId);
-
 }]);
 
 app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
+  
 
   console.log("LETS GO REPORT");
 
-  $scope.refresh = function(){
-      $("#graph svg").remove();
-      var width=$(window).width();
-      var margin = {
-        top : 20,
-        right : 50,
-        bottom : 30,
-        left : 50
-      };
-      width = width - margin.left - margin.right;
-      var height = 300 - margin.top - margin.bottom;
+  $scope.genChart = function(){
+    console.log("GEN CHART!")
+     var sd, ed, startDate, endDate, range, json, empty;
 
-      var parseDate = d3.time.format("%Y-%m-%d").parse;
-
-      var x = d3.time.scale().range([0, width]);
-
-      var y = d3.scale.linear().range([height, 0]);
-
-      var xAxis = d3.svg.axis().scale(x).orient("bottom");
-
-      var yAxis = d3.svg.axis().scale(y).orient("left");
-
-      var line = d3.svg.line().x(function(d) {
-        return x(d.date);
-      }).y(function(d) {
-        return y(d.close);
+      var today = new Date();
+      endDate = getTimeString(today);
+      range = 6;
+      var ed = endDate.split("-");
+      var sd = new Date(ed[0], ed[1] - 1, ed[2]);
+      sd.setDate(sd.getDate() - range);
+      startDate = getTimeString(sd);
+      console.log(startDate);
+      $(".range").click(function() {
+        range = $(this).attr("value");
+        console.log("range set:"+range);
+      });
+      $.getJSON("scripts/milkdata.json", function(data) {
+        json = data;
       });
 
-      var svg = d3.select("#graph").
-        append("svg").
-        attr("width", width + margin.left + margin.right).
-        attr("height", height + margin.top + margin.bottom).
-        append("g").
-        attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      $("#btn").click(function() {
+       
+            d=$("#datepicker").val();
+            if (d !="") {
+              console.log("test");
+              endDate =d;
+              console.log("myDate:" + endDate);
+              var ed = endDate.split("-");
+              var sd = new Date(ed[0], ed[1] - 1, ed[2]);
+              sd.setDate(sd.getDate() - range);
+              startDate =getTimeString(sd);
+            }
 
-      var date1 = "";
-      var tm;
-      var data = [];
-      $.each(Reports.all(), function(key, value) {
-        $.each(value, function(k, v) {
-          if (k == "Date") {
-            $.each(v, function(k1, v1) {
-              date1 = timeConverter(v1);
-              tm = v1;
-            });
-            return true;
-          }
-          if (k == "BMCC") {
-            var d = {
-              date : parseDate(date1),
-              close : v,
-              timestamp : tm
-            };
-            data.push(d);
-            return true;
-          }
+            $("#Date").text("Trend Chart - From:" + startDate + " To: " + endDate);
+
+            empty = draw(json);
+            if (empty == false) {
+              $("svg").remove();
+              alert("No data in the selected period!");
+            }
+
+
         });
-      });
-      data.sort(function(a, b) {
-        return a.timestamp - b.timestamp;
-      });
-      x.domain(d3.extent(data, function(d) {
-        return d.date;
-      }));
-      y.domain(d3.extent(data, function(d) {
-        return d.close;
-      }));
 
-      svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(xAxis);
+            //code adapted from D3 Line chart example at http://bl.ocks.org/benjchristensen/2579599
+        function draw(info) {
+          $("svg").remove();
+            var width = $(window).width();
+            var margin = {
+              top : 20,
+              right : 50,
+              bottom : 80,
+              left : 50
+            };
+            width = width - margin.left - margin.right;
+            var height = 300 - margin.top - margin.bottom;
+            var parseDate = d3.time.format("%Y-%m-%d").parse;
 
-      svg.append("g").attr("class", "y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text("BMCC");
+            //timestamp form of the startDate and endDate
+            var sdts = getTimeStamp(startDate);
+            var edts = getTimeStamp(endDate);
 
-      svg.append("path").datum(data).attr("class", "line").attr("d", line);
+            var x = d3.time.scale().range([0, width]);
 
-      function timeConverter(UNIX_timestamp) {
-          var a = new Date(UNIX_timestamp);
-          var year = a.getFullYear();
-          var month = ((a.getMonth() + 1) < 10 ? '0' + (a.getMonth() + 1) : (a.getMonth() + 1) );
-          var date = (a.getDate() < 10 ? '0' + a.getDate() : a.getDate());
-          var time = year + '-' + month + '-' + date;
-          return time;
-      }
+            var y = d3.scale.linear().range([height, 0]);
+            if (range == 2) {
+              var xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(2);
+            } else if (range == 6) {
+              var xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(6);
+            } else {
+              var xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(10);
+            }
+
+            var yAxis = d3.svg.axis().scale(y).orient("left");
+
+            var line = d3.svg.line().x(function(d) {
+              return x(d.date);
+            }).y(function(d) {
+              return y(d.close);
+            });
+
+            var svg = d3.select("#graph").append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var date1 = "";
+            var ts;
+            var data = [];
+            var flag = 0;
+            $.each(info, function(key, value) {
+              $.each(value, function(k, v) {
+                if (k == "Date") {
+                  $.each(v, function(k1, v1) {
+                    date1 = timeConverter(v1);
+                    var date1ts = getTimeStamp(date1);
+
+                    if (date1ts >= sdts && date1ts <= edts) {
+                      ts = v1;
+                    } else {
+                      flag = 1;
+                    }
+                  });
+                  if (flag == 0) {
+                    return true;
+                  } else {
+                    flag = 0;
+                    return false;
+                  }
+
+                }
+                if (k == "BMCC") {
+                  var d = {
+                    date : parseDate(date1),
+                    close : v,
+                    timestamp : ts
+                  };
+                  data.push(d);
+                  return true;
+                }
+              });
+            });
+            if (data.length == 0) {
+              return false;
+            }
+            data.sort(function(a, b) {
+              return a.timestamp - b.timestamp;
+            });
+            x.domain(d3.extent(data, function(d) {
+              return d.date;
+            }));
+            y.domain(d3.extent(data, function(d) {
+              return d.close;
+            }));
+
+            //code doing diagonal x axis labels adapted from http://www.d3noob.org/2013/01/how-to-rotate-text-labels-for-x-axis-of.html
+            svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(xAxis).selectAll("text").style("text-anchor", "end").attr("dx", "-.8em").attr("dy", ".15em").attr("transform", function(d) {
+              return "rotate(-65)";
+            });
+
+            svg.append("g").attr("class", "y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text("BMCC");
+
+            svg.append("path").datum(data).attr("class", "line").attr("d", line);
+
+    //code adapted from http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
+    function timeConverter(UNIX_timestamp) {
+      var a = new Date(UNIX_timestamp);
+      var year = a.getFullYear();
+      var month = ((a.getMonth() + 1) < 10 ? '0' + (a.getMonth() + 1) : (a.getMonth() + 1) );
+      var date = (a.getDate() < 10 ? '0' + a.getDate() : a.getDate());
+      var time = year + '-' + month + '-' + date;
+      return time;
+    }
+
+    //transform the timeString with format "yyyy-mm-dd" to Unix timestamp
+    function getTimeStamp(timeString) {
+      var dates = timeString.split("-");
+      var date = new Date(dates[0], dates[1] - 1, dates[2]);
+      var timestamp = date.getTime();
+      return timestamp;
+    }
+
+    function getTimeString(dateObj){
+      var year = dateObj.getFullYear();
+      var month = ((dateObj.getMonth() + 1) < 10 ? '0' + (dateObj.getMonth() + 1) : (dateObj.getMonth() + 1) );
+      var date = (dateObj.getDate() < 10 ? '0' + dateObj.getDate() : dateObj.getDate());
+      var time = year + '-' + month + '-' + date;
+      return time;
+    }
   }
-  
+}
+
 
 }]);
 

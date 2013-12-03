@@ -1,4 +1,36 @@
-<div id="wrap">
+
+
+
+<nav-page title="report.bmcc">
+
+<content id="signin" has-header="true" has-tabs="true">
+        <div class="padding text-center" style="vertical-align:middle;">
+          <h1 class="lobster">MooData</h1>
+          
+          <img src="images/cow.png">
+          
+        </div>
+        <div class="list list-inset">
+        <form  >
+          <label class="item item-input">
+            <span class="input-label">Your email</span>
+            <input ng-model="user.email" name="email" type="email">
+          </label>
+          <label class="item item-input">
+            <span class="input-label">Your password </span>
+            <input ng-model="user.pass" name="pass" type="password">
+          </label>
+          <button ng-click="login()" class="button button-dark button-block">Sign in</button>
+        </form>
+        </div>
+      </content>
+</nav-page>
+
+
+
+
+
+<!-- <div id="wrap">
     <div class="full-width-image-1"></div>
     <div class="container" ></div>
     <div class="row" id="title-row">
@@ -19,4 +51,4 @@
 
         </div>
     </div>
-</div>
+</div> -->
