@@ -82,7 +82,7 @@ app.factory('Reports', ['$http', function($http) {
       success(function(data, status, headers, config) {
         
         data.forEach(function(d){ 
-          if (reports && reports.length < 10){
+          if (reports){
             
             d.Date.moment = window.moment(d.Date.$date.toString().slice(0,-3),'X');
             
@@ -112,13 +112,14 @@ app.factory('Reports', ['$http', function($http) {
   return {
     all: function() {
 
-      reports.sort(function(a,b){
-        console.log(a +" "+ b)
-        return b.Date.moment > a.Date.moment;
-      });
-
       return reports;
+    
     },
+    last_thirty: function(){
+
+      return reports.slice(0,30);
+
+    } ,
     clear: function(){
       reports = [];
       this.refresh();
@@ -197,14 +198,14 @@ app.controller('SigninCtrl', ['$scope','$http', '$location', 'User', function($s
 
 app.controller('DashboardCtrl', ['User','Reports', '$scope', function(User, Reports, $scope){
 
-  $scope.reports = Reports.all();
+  $scope.reports = Reports.last_thirty();
 
   $scope.refresh = function(){
     console.log(this);
     this.reports.forEach(function(d){ d = null });
     console.log(this);
     Reports.refresh();
-    this.reports = Reports.all();
+    this.reports = Reports.last_thirty();
     this.refresh.time = moment().calendar();
   }
 
@@ -221,6 +222,21 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
   
   console.log("LETS GO REPORT");
   
+
+  function getTimeStamp(timeString) {
+      var dates = timeString.split("-");
+      var date = new Date(dates[0], dates[1] - 1, dates[2]);
+      var timestamp = date.getTime();
+      return timestamp;
+    }
+
+    function getTimeString(dateObj){
+      var year = dateObj.getFullYear();
+      var month = ((dateObj.getMonth() + 1) < 10 ? '0' + (dateObj.getMonth() + 1) : (dateObj.getMonth() + 1) );
+      var date = (dateObj.getDate() < 10 ? '0' + dateObj.getDate() : dateObj.getDate());
+      var time = year + '-' + month + '-' + date;
+      return time;
+    }
   
    var sd, ed, startDate, endDate, range, json, empty;
    var parameter="BMCC";
@@ -233,9 +249,9 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
       startDate = getTimeString(sd);
       console.log(startDate);
       
-      $.getJSON("scripts/milkdata.json", function(data) {
-        json = data;
-      });
+
+
+      
 	
   $scope.periods=[
   {
@@ -318,18 +334,19 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
             }
 
             $("#Date").text("Trend Chart - From:" + startDate + " To: " + endDate);
+            reports = Reports.all();
+            console.log("reports");
+            console.log(reports);
 
-            empty = draw(json);
+            empty = draw(reports);
             if (empty == false) {
               $("svg").remove();
               alert("No data in the selected period!");
             }
 
-
-        
-
             //code adapted from D3 Line chart example at http://bl.ocks.org/benjchristensen/2579599
         function draw(info) {
+          console.log("STARTING TO DRAW!");
           $("svg").remove();
             var width = $(window).width();
             var margin = {
@@ -351,18 +368,23 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
             var data = [];
             var flag = 0;
             var flag2=0;
+            console.log(info);
             $.each(info, function(key, value) {
+              console.log(key +" "+ value);
               $.each(value, function(k, v) {
                 if (k == "Date") {
                   $.each(v, function(k1, v1) {
-                    date1 = timeConverter(v1);
-                    var date1ts = getTimeStamp(date1);
+                    console.log(k1 + " " + v1);
+                    if (k1 == "$date"){
+                      date1 = timeConverter(v1);
+                      var date1ts = getTimeStamp(date1);
 
-                    if (date1ts >= sdts && date1ts <= edts) {
-                      ts = v1;
-                      flag2+=1;
-                    } else {
-                      flag = 1;
+                      if (date1ts >= sdts && date1ts <= edts) {
+                        ts = v1;
+                        flag2+=1;
+                      } else {
+                        flag = 1;
+                      }
                     }
                   });
                   if (flag == 0) {
