@@ -249,28 +249,24 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
       startDate = getTimeString(sd);
       console.log(startDate);
       
-
-
-      
-	
   $scope.periods=[
-  {
-  	name:"3 days",
-  	value:"2"
-  },
-  {
-  	name:"week",
-  	value:"6"
-  },
-  {
-  	name:"month",
-  	value:"30"
-  },
-  {
-  	name:"year",
-  	value:"364"
-  }
-  ];
+        {
+        	name:"3 days",
+        	value:"2"
+        },
+        {
+        	name:"week",
+        	value:"6"
+        },
+        {
+        	name:"month",
+        	value:"30"
+        },
+        {
+        	name:"year",
+        	value:"364"
+        }
+    ];
   
   $scope.setRange = function(period) {
         $scope.selected = period;
