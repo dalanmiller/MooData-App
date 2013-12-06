@@ -16,6 +16,7 @@ moment.lang('en', {
     }
 });
 
+<<<<<<< HEAD
 
 window.onNotificationGCM = function(e){
 switch(e.event){
@@ -30,7 +31,8 @@ break;
  }
 };
 
-var app = angular.module('moodata', [ 'ionic','ngRoute', 'ngAnimate']);
+var app = angular.module('moodata', [ 'ionic','ngRoute', 'ngAnimate','ngDropdowns']);
+
  
 // app.config(['$compileProvider', function ($compileProvider){
 //   // Needed for routing to work
@@ -247,22 +249,6 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
   
   console.log("LETS GO REPORT");
   
-
-  function getTimeStamp(timeString) {
-      var dates = timeString.split("-");
-      var date = new Date(dates[0], dates[1] - 1, dates[2]);
-      var timestamp = date.getTime();
-      return timestamp;
-    }
-
-    function getTimeString(dateObj){
-      var year = dateObj.getFullYear();
-      var month = ((dateObj.getMonth() + 1) < 10 ? '0' + (dateObj.getMonth() + 1) : (dateObj.getMonth() + 1) );
-      var date = (dateObj.getDate() < 10 ? '0' + dateObj.getDate() : dateObj.getDate());
-      var time = year + '-' + month + '-' + date;
-      return time;
-    }
-  
    var sd, ed, startDate, endDate, range, json, empty;
    var parameter="BMCC";
       var today = new Date();
@@ -272,82 +258,77 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
       var sd = new Date(ed[0], ed[1] - 1, ed[2]);
       sd.setDate(sd.getDate() - range);
       startDate = getTimeString(sd);
-      console.log(startDate);
       
-  $scope.periods=[
-        {
-        	name:"3 days",
-        	value:"2"
-        },
-        {
-        	name:"week",
-        	value:"6"
-        },
-        {
-        	name:"month",
-        	value:"30"
-        },
-        {
-        	name:"year",
-        	value:"364"
-        }
-    ];
-  
-  $scope.setRange = function(period) {
-        $scope.selected = period;
-        range=period.value;
-    }
 
-  $scope.isSelected = function(period) {
-        return $scope.selected === period;
-  }
+
+$scope.ddSelectOptions = [
+        {
+  	text:"3 days",
+  	value:"2"
+  },
+  {
+  	text:"week",
+  	value:"6"
+  },
+  {
+  	text:"month",
+  	value:"30"
+  },
+  {
+  	text:"year",
+  	value:"364"
+  }                 
+    ]  
+
+    $scope.ddSelectSelected = {
+    	text: "Select the range",
+    	value:"7"
+    } 
+    $scope.setRange = function() {
+        range= $scope.ddSelectSelected.value;
+    }
   
   $scope.paras=[
   {
-  	name:"BMCC",
+  	text:"BMCC",
   	value:"BMCC"
   },
   {
-  	name:"Milkfat",
+  	text:"Milkfat",
   	value:"Milkfat"
   },
   {
-  	name:"Volume",
+  	text:"Volume",
   	value:"Volume"
   },
   {
-  	name:"Temperature",
+  	text:"Temperature",
   	value:"Temp"
   },
   {
-  	name:"Total Plate Count",
+  	text:"Total Plate Count",
   	value:"Total Plate Count"
   },
   {
-  	name:"True Protein",
+  	text:"True Protein",
   	value:"True Protein"
   }
   ];
   
-  
-  $scope.setParameter = function(para) {
-        $scope.selected2 = para;
-        parameter=para.value;
-    }
-
-  $scope.isSelected2 = function(para) {
-        return $scope.selected2 === para;
-  }
-	
+  $scope.paraSelected = {
+    	text: "Select the parameter",
+    	value:"BMCC"
+    } 
+  $scope.setParameter = function() {
+        parameter= $scope.paraSelected.value;
+    }	
 	
   $scope.genChart = function(){
     console.log("GEN CHART!")
        
             d=$("#datepicker").val();
             if (d !="") {
-              console.log("test");
               endDate =d;
-              console.log("myDate:" + endDate);
               var ed = endDate.split("-");
               var sd = new Date(ed[0], ed[1] - 1, ed[2]);
               sd.setDate(sd.getDate() - range);
@@ -356,8 +337,6 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
 
             $("#Date").text("Trend Chart - From:" + startDate + " To: " + endDate);
             reports = Reports.all();
-            console.log("reports");
-            console.log(reports);
 
             empty = draw(reports);
             if (empty == false) {
@@ -389,13 +368,11 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
             var data = [];
             var flag = 0;
             var flag2=0;
-            console.log(info);
+
             $.each(info, function(key, value) {
-              console.log(key +" "+ value);
               $.each(value, function(k, v) {
                 if (k == "Date") {
                   $.each(v, function(k1, v1) {
-                    console.log(k1 + " " + v1);
                     if (k1 == "$date"){
                       date1 = timeConverter(v1);
                       var date1ts = getTimeStamp(date1);
@@ -406,6 +383,7 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
                       } else {
                         flag = 1;
                       }
+                      return false;
                     }
                   });
                   if (flag == 0) {
@@ -479,7 +457,12 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
 
             svg.append("path").datum(data).attr("class", "line").attr("d", line);
 
-    //code adapted from http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
+    
+  }
+  
+}
+
+//code adapted from http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
     function timeConverter(UNIX_timestamp) {
       var a = new Date(UNIX_timestamp);
       var year = a.getFullYear();
@@ -504,8 +487,6 @@ app.controller('TrendsCtrl', ['$scope', 'Reports', function($scope, Reports){
       var time = year + '-' + month + '-' + date;
       return time;
     }
-  }
-}
 
 
 }]);

@@ -35,27 +35,21 @@
 			<content has-header="true" has-tabs="true" padding="true">
 
 				<div class="padding text-center">
-					<input type="date" id="datepicker" placeholder="End Date">
-					<div class="button-bar" >
-						<div class="col" ng-repeat="period in periods">
-							<button ng-click="setRange(period)"  class="button button-block" ng-class="isSelected(period)? 'button-light':''">
-								{{period.name}}
-							</button>
-						</div>
+					<label class="item item-input"> <span class="input-label">End Date</span>
+						<input type="date" id="datepicker" >
+					</label>
+					
+					<div>
+						<div id="dd1" dropdown-select="ddSelectOptions"
+						dropdown-model="ddSelectSelected"
+						dropdown-item-label="text" ng-click="setRange()" ></div>
+						<div id="dd2" dropdown-select="paras"
+						dropdown-model="paraSelected"
+						dropdown-item-label="text" ng-click="setParameter()" ></div>
+						<button ng-click="genChart()" class="button button-block" type="button" >
+							Go!
+						</button>
 					</div>
-
-					<div class="button-bar">
-						<div class="col" ng-repeat="para in paras">
-							<button ng-click="setParameter(para)"  class="button button-block" ng-class="isSelected2(para)? 'button-light':''">
-								{{para.name}}
-							</button>
-						</div>
-					</div>
-
-
-					<button ng-click="genChart()" class="button button-block" type="button" >
-						Go!
-					</button>
 
 				</div>
 				<div id="graph">
