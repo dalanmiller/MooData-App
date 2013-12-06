@@ -16,6 +16,20 @@ moment.lang('en', {
     }
 });
 
+
+window.onNotificationGCM = function(e){
+switch(e.event){
+case "registered":
+if (e.regid.length > 0){
+  console.log("reg id: ["+e.regid+"]");
+}
+break;
+default:
+break;
+
+ }
+};
+
 var app = angular.module('moodata', [ 'ionic','ngRoute', 'ngAnimate']);
  
 // app.config(['$compileProvider', function ($compileProvider){
@@ -186,6 +200,17 @@ app.controller('SigninCtrl', ['$scope','$http', '$location', 'User', function($s
       success(function(data, status, headers, config) {
         User.set(data);
         $location.path('/dashboard');
+
+        var pushNotification = window.plugins.pushNotification; 
+
+        function log (e){console.log(e)}
+
+        pushNotification.register(
+          log, 
+          log,
+          {'senderID': "620831868836", "ecb": "onNotificationGCM"} 
+        );
+
       }).
       error(function(data, status, headers, config) {
         alert("Login has failed, please enter your credentials again");
